@@ -20,7 +20,6 @@ type Options struct {
 
 func main() {
 	opts := parseFlags()
-
 	args := flag.Args()
 
 	var input io.Reader
@@ -47,21 +46,16 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-
 		defer in.Close()
-
 		out, err := os.Create(args[1])
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-
 		defer out.Close()
-
 		input = in
 		output = out
 	}
-
 	lines := readLines(input)
 	result := Uniq(lines, opts)
 
@@ -108,7 +102,6 @@ func readLines(r io.Reader) []string {
 	scanner := bufio.NewScanner(r)
 
 	var lines []string
-
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
@@ -132,7 +125,6 @@ func normalize(s string, opts Options) string {
 	}
 
 	fields := strings.Fields(s)
-
 	if opts.SkipFields > 0 && opts.SkipFields < len(fields) {
 		s = strings.Join(fields[opts.SkipFields:], " ")
 	}
@@ -154,7 +146,6 @@ func Uniq(lines []string, opts Options) []string {
 	}
 
 	var groups []group
-
 	prevNorm := normalize(lines[0], opts)
 	current := group{original: lines[0], count: 1}
 
@@ -170,7 +161,6 @@ func Uniq(lines []string, opts Options) []string {
 	}
 
 	groups = append(groups, current)
-
 	var result []string
 
 	for _, g := range groups {
@@ -185,6 +175,5 @@ func Uniq(lines []string, opts Options) []string {
 			result = append(result, g.original)
 		}
 	}
-
 	return result
 }
