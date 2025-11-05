@@ -22,42 +22,36 @@ func main() {
 	opts := parseFlags()
 	args := flag.Args()
 
-	var input io.Reader
-	var output io.Writer
-	var err error
+	input, output := open(args)
+	lines := readLines(input)
+	result := Uniq(lines, opts)
+	writeLines(output, result)
+}
 
+func open(args []string) (io.Reader, io.Writer) {
 	switch len(args) {
 	case 0:
-		input = os.Stdin
-		output = os.Stdout
+		return os.Stdin, os.Stdout
 	case 1:
-		input, err = os.Open(args[0])
+		f, err := os.Open(args[0])
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		defer input.(*os.File).Close()
-		output = os.Stdout
+		return f, os.Stdout
 	default:
 		in, err := os.Open(args[0])
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		defer in.Close()
 		out, err := os.Create(args[1])
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		defer out.Close()
-		input = in
-		output = out
+		return in, out
 	}
-	lines := readLines(input)
-	result := Uniq(lines, opts)
-
-	writeLines(output, result)
 }
 
 func parseFlags() Options {
