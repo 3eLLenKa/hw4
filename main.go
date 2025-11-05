@@ -36,9 +36,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-
 		defer input.(*os.File).Close()
-
 		output = os.Stdout
 	default:
 		in, err := os.Open(args[0])
